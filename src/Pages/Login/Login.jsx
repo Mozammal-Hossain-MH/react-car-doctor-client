@@ -3,11 +3,13 @@ import login from '../../assets/images/login/login.svg'
 import { useContext } from 'react';
 import { AuthContext } from '../../Providers/AuthProvider';
 import Swal from 'sweetalert2';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
-    const {signIn } = useContext(AuthContext);
+    const { signIn } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleSignIn = e => {
         e.preventDefault();
@@ -16,21 +18,30 @@ const Login = () => {
         const password = form.get('password');
 
         signIn(email, password)
-        .then(result => {
-            console.log(result.user);
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Login successfully",
-                showConfirmButton: false,
-                timer: 1500
-              });
-              navigate('/')
-              e.target.reset();
-        })
-        .catch(error => {
-            console.log(error.message);
-        })
+            .then(result => {
+                console.log(result.user)
+                const user = { email };
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Login successfully",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                axios.post('http://localhost:5000/jwt', user, { withCredentials: true })
+                    .then(data => {
+                        console.log(data.data);
+                        if (data.data.success) {
+                            navigate(location?.state ? location.state : '/')
+                        }
+                    })
+
+                e.target.reset();
+            })
+            .catch(error => {
+                console.log(error.message);
+            })
     }
     return (
         <div className="hero min-h-screen bg-[#F1F1F1] my-5 rounded">

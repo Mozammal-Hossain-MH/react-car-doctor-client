@@ -8,7 +8,6 @@ const Checkout = () => {
     const service = useLoaderData();
     const { user } = useContext(AuthContext);
     const { _id, price, title, img } = service;
-    console.log(service);
 
     const handleCheckout = e => {
         e.preventDefault()

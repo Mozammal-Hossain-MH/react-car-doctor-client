@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import Service from "./Service";
+import axios from "axios";
 
 
 const Services = () => {
     const [services, setServices] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:5000/services')
-            .then(res => res.json())
-            .then(data => setServices(data))
+        axios.get('http://localhost:5000/services')
+        .then(data => {
+            setServices(data.data)
+        })
     }, [])
 
 
